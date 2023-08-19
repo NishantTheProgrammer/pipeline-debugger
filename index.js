@@ -3,6 +3,4 @@ const debugPipeline = (model, query) => {
 }
 
 
-export {
-    debugPipeline
-};
+module.exports = { debugPipeline };
