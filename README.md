@@ -10,8 +10,6 @@ The MongoDB Aggregation Pipeline Debugger is a powerful tool designed to help yo
 - **Data Preview:** View the data at different stages of the pipeline to understand how it changes after each transformation.
 - **Expression Evaluation:** Evaluate and preview the results of complex expressions used in `$project`, `$addFields`, and other stages.
 - **Bottleneck Identification:** Identify stages that might be causing performance bottlenecks in your pipeline.
-- **Error Highlighting:** Quickly identify errors or issues within your aggregation pipeline that might be causing unexpected results.
-- **Sample Data Support:** Load and use sample data to simulate real-world scenarios and fine-tune your pipeline.
 - **Export Results:** Export intermediate or final results for further analysis or sharing with your team.
 
 ## Installation
