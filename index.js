@@ -1,19 +1,6 @@
 const fs = require('fs');
 const path = require('path');
 
-/**
- * Debugs a pipeline of stages in a model.
- *
- * @param {Object} model - The model to debug.
- * @param {Array} pipeline - The pipeline stages to debug.
- * @param {Object} config - Configuration options for debugging.
- * @property {string} [config.outputMode='console'] - Output mode ('console', 'fileJson', or 'fileLog').
- * @property {string} [config.debuggerCollectionPrefix='pipeline-debugger'] - Prefix for debugger collection names.
- * @property {Array<number>} [config.skipStages=[]] - Stages to skip during debugging.
- * @property {number} [config.limit=2] - Maximum number of results to include in output.
- * @property {boolean} [config.shouldStringify=true] - Whether to stringify output objects.
- * @property {boolean} [config.showQuery=true] - Whether to display the query stage in the output.
- */
 const consoleOutput = (results, config) => {
     console.clear();
     results.forEach(({ stateNumber, stage, output }) => {
@@ -26,13 +13,7 @@ const consoleOutput = (results, config) => {
     });
 };
 
-/**
- * Writes debugging results to a file.
- *
- * @param {Array} results - An array of debugging results.
- * @param {Object} config - Configuration options for output.
- * @param {string} mode - Output mode ('json' or 'log').
- */
+
 const fileOutput = async (results, config, mode) => {
     let fileContent = '';
     if (mode === 'json') {
