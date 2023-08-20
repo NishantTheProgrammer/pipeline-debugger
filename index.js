@@ -20,8 +20,9 @@ const consoleOutput = (results, config) => {
  * @param {Array} pipeline - The array of pipeline stages to debug.
  * @param {object} config - Configuration options for debugging.
  */
-const debugPipeline = async (model, pipeline = [], config = {
+ const debugPipeline = async (model, pipeline = [], config = {
     outputMode: 'console',
+    debuggerCollectionPrefix: 'pipeline-debugger',
     skipStages: [],
     limit: 2,
     showQuery: true
@@ -39,8 +40,8 @@ const debugPipeline = async (model, pipeline = [], config = {
     const results = [];
 
     for (const [i, stage] of pipeline.entries()) {
-        const debuggerOldCollectionName = `pipeline-debugger-${i}`;
-        const debuggerNewCollectionName = `pipeline-debugger-${i + 1}`;
+        const debuggerOldCollectionName = `${config.debuggerCollectionPrefix}-${i}`;
+        const debuggerNewCollectionName = `${config.debuggerCollectionPrefix}-${i + 1}`;
         const debuggerOldCollection = db.collection(debuggerOldCollectionName);
         const debuggerNewCollection = db.collection(debuggerNewCollectionName);
         const query = [stage, { $out: debuggerNewCollectionName }];
@@ -50,12 +51,13 @@ const debugPipeline = async (model, pipeline = [], config = {
         } else {
             const cursor = await debuggerOldCollection.aggregate(query);
             await cursor.toArray();
+            await debuggerOldCollection.drop();
         }
-
+        
         const output = await debuggerNewCollection.find({}).limit(config.limit).toArray();
+        if(i !== 0 && i === pipeline.length - 1) { await debuggerNewCollection.drop(); }
         results.push({ stage, output });
     }
-
 
     if(config.outputMode === 'console') {
         consoleOutput(results, config);

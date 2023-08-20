@@ -1,6 +1,6 @@
 {
   "name": "pipeline-debugger",
-  "version": "1.0.1",
+  "version": "1.0.4",
   "description": "The MongoDB Aggregation Pipeline Debugger is a powerful tool designed to help you analyze and debug your aggregation pipelines",
   "main": "index.js",
   "scripts": {
