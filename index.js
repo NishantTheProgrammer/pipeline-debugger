@@ -1,14 +1,40 @@
+const fs = require('fs');
+const path = require('path');
+
 
 const consoleOutput = (results, config) => {
     console.clear();
-    results.forEach(({ stateNumber, stage, output }, index) => {
+    results.forEach(({ stateNumber, stage, output }) => {
         console.log(`\x1b[42m\x1b[97mStage: ${stateNumber}\x1b[0m`);
         if (config.showQuery) {
             console.log(`\x1b[34m${JSON.stringify(stage, 3, 3)}\x1b[0m`);
         }
         console.log(`\x1b[32mOutput:\x1b[0m`);
-        console.log(output);
+        console.log(config.shouldStringify ? JSON.stringify(output, 3, 3) : output);
     })
+}
+const fileOutput = async (results, config, mode) => {
+
+    let fileContent = '';
+    if (mode === 'json') {
+        fileContent = JSON.stringify(results, 3, 3);
+    }
+    else if (mode === 'log') {
+        fileContent = results.map(({ stateNumber, stage, output }) => `
+Stage: ${stateNumber}
+--------
+${config.showQuery ? JSON.stringify(stage, 3, 3) : ''}
+Output:
+-------
+
+${config.shouldStringify ? JSON.stringify(output, 3, 3) : output}
+        `).join('\n');
+    }
+    const appDir = path.dirname(require.main.filename);
+    const writePath = path.join(appDir, config.debuggerCollectionPrefix + '.' + mode);
+
+    await fs.writeFileSync(writePath, fileContent);
+    console.log('Logs written to: ', writePath);
 }
 
 
@@ -19,6 +45,7 @@ const debugPipeline = async (model, pipeline = [], config = {}) => {
         debuggerCollectionPrefix: 'pipeline-debugger',
         skipStages: [],
         limit: 2,
+        shouldStringify: true,
         showQuery: true
     };
 
@@ -61,9 +88,11 @@ const debugPipeline = async (model, pipeline = [], config = {}) => {
 
     if (config.outputMode === 'console') {
         consoleOutput(results, config);
+    } else if (config.outputMode === 'fileJson') {
+        fileOutput(results, config, 'json')
+    } else if (config.outputMode === 'fileLog') {
+        fileOutput(results, config, 'log')
     }
 };
-
-
 
 module.exports = { debugPipeline };
